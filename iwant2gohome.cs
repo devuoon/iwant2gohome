@@ -19,6 +19,27 @@ static class Program
 {
     [DllImport("user32.dll")] static extern bool SetProcessDPIAware();
 
+    // 업데이트 마무리: 실행 중이던 기존 프로세스가 끝나길 기다린 뒤, 자기 자신(새 exe)을 기존 경로에 복사하고 그 exe 를 실행
+    static void ApplyUpdate(string pidText, string target)
+    {
+        try
+        {
+            int pid; if (int.TryParse(pidText, out pid)) { try { System.Diagnostics.Process.GetProcessById(pid).WaitForExit(20000); } catch { } }
+            string self = Application.ExecutablePath;
+            Exception last = null;
+            for (int i = 0; i < 40; i++)
+            {
+                try { File.Copy(self, target, true); last = null; break; }
+                catch (Exception ex) { last = ex; Thread.Sleep(500); }
+            }
+            if (last != null) { Log.Write("업데이트 교체 실패: " + last.Message); }
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(target);
+            psi.UseShellExecute = false;
+            System.Diagnostics.Process.Start(psi);
+        }
+        catch (Exception ex) { Log.Write("업데이트 마무리 실패: " + ex.Message); }
+    }
+
     static void KillOthers()
     {
         try
@@ -39,6 +60,7 @@ static class Program
         try
         {
             if (args.Length >= 2 && args[0] == "--snapshot") { Snapshot.Run(args); return; }
+            if (args.Length >= 3 && args[0] == "--apply-update") { ApplyUpdate(args[1], args[2]); return; }
             if (args.Length >= 1 && args[0] == "--uninstall") { Startup.Remove(); return; }
             if (args.Length >= 1 && args[0] == "--install") { Startup.Add(); }
 
@@ -949,7 +971,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 5;
+    public const int Version = 6;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
@@ -1004,11 +1026,9 @@ static class Updater
                 if (pr.ExitCode != 0 || !File.Exists(newExe)) { Log.Write("업데이트 컴파일 실패: " + o); return "새 버전을 만드는 데 실패했습니다. (error.log 확인)"; }
             }
 
+            // 배치 파일(.bat)은 한글 경로가 깨질 수 있어 쓰지 않는다: 새로 만든 exe 가 스스로 기존 exe 를 덮어쓰고 다시 실행한다 (모두 유니코드 API)
             string exe = Application.ExecutablePath;
-            string bat = Path.Combine(tmp, "swap.bat");
-            string script = "@echo off\r\nfor /l %%i in (1,1,20) do (\r\n  ping 127.0.0.1 -n 2 >nul\r\n  move /y \"" + newExe + "\" \"" + exe + "\" >nul 2>&1 && goto done\r\n)\r\n:done\r\nstart \"\" \"" + exe + "\"\r\n";
-            File.WriteAllText(bat, script, Encoding.Default);
-            ProcessStartInfo sp = new ProcessStartInfo("cmd.exe", "/c \"" + bat + "\"");
+            ProcessStartInfo sp = new ProcessStartInfo(newExe, "--apply-update " + Process.GetCurrentProcess().Id + " \"" + exe + "\"");
             sp.UseShellExecute = false; sp.CreateNoWindow = true;
             Process.Start(sp);
             return null;
