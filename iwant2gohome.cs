@@ -922,7 +922,7 @@ static class Settings
 {
     public static int Opacity = 100;
     public static bool WeatherOn = true;
-    public static string UpdateBase = "";   // 업데이트 주소: https://... 폴더 URL 또는 공유 폴더 경로 (version.txt + iwant2gohome.cs)
+    public static string UpdateBase = "https://raw.githubusercontent.com/devuoon/iwant2gohome/main";   // 업데이트 주소: https://... 폴더 URL 또는 공유 폴더 경로 (version.txt + iwant2gohome.cs)
     public static string Char = "dev";   // dev: 개발자 / f1: 여자1
     public static int SizePct = 100;                       // 위젯 크기(%)
     public static int PosX = int.MinValue, PosY = int.MinValue;   // 저장된 위치 (없으면 오른쪽 아래)
@@ -942,7 +942,7 @@ static class Settings
                 int v; double d;
                 if (k == "opacity" && int.TryParse(val, out v) && v >= 20 && v <= 100) Opacity = v;
                 else if (k == "weather") WeatherOn = val != "off";
-                else if (k == "update") UpdateBase = line.Substring(line.IndexOf('=') + 1).Trim();
+                else if (k == "update") { string u = line.Substring(line.IndexOf('=') + 1).Trim(); if (u.Length > 0) UpdateBase = u; }
                 else if (k == "char") Char = val == "f1" ? "f1" : "dev";
                 else if (k == "size" && int.TryParse(val, out v) && v >= 50 && v <= 300) SizePct = v;
                 else if (k == "x" && int.TryParse(val, out v)) PosX = v;
@@ -971,7 +971,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 6;
+    public const int Version = 7;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
