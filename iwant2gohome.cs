@@ -193,6 +193,7 @@ class Model
 {
     public string InText, OffText, Label, Big, PctText, Phase, Act, Char;
     public bool Over, Warn;
+    public double LeftMin;
     public double Progress;
     public int OffsetX;
 
@@ -238,6 +239,7 @@ class Model
             m.Phase = "over"; left = off - now; m.Over = true; m.Label = "야근 중"; m.Big = "+" + Hms(left);
         }
         m.Warn = !m.Over && left.TotalMinutes < 10;
+        m.LeftMin = (off - now).TotalMinutes;
         return m;
     }
 }
@@ -266,6 +268,10 @@ static class Ui
         QUIP["f:leave"] = new string[] { "먼저 들어갈게요^^|(퇴근이다!!)", "수고하셨습니다|(집 가서 뭐 먹지)", "내일 뵙겠습니다~|(내일은 제발 연차)" };
         QUIP["f:eat"] = new string[] { "맛있게 드세요^^|(오늘 메뉴 대박)", "식사 맛있게요~|(디저트는 뭐 먹지)", "천천히 드세요~|(밥이 제일 중요해)" };
         QUIP["f:cheer"] = new string[] { "수고하셨습니다!|(퇴근 완료!!)", "내일 뵙겠습니다~|(집에 가자!!)" };
+        QUIP["lunch"] = new string[] { "점심 뭐 먹지?", "초밥? 햄버거?", "국밥 땡긴다", "오늘은 제육이다", "돈까스 먹을까?", "김치찌개 어때?", "샐러드…는 아니지", "마라탕은 어제 먹었는데" };
+        QUIP["f:lunch"] = new string[] { "점심 뭐 드실래요?^^|(초밥? 햄버거? 국밥!)", "오늘 메뉴 정하셨어요?|(마라탕만은 안 돼)", "맛집 아시는 데 있어요?|(오늘은 햄버거다)", "저는 아무거나 좋아요^^|(아무거나 말고 초밥)", "점심시간 다가오네요~|(배고파 죽겠다)", "샐러드 어때요?^^|(탄수화물 먹고 싶다)" };
+        QUIP["leave"] = new string[] { "퇴근 30분 전!", "슬슬 짐 싸자", "칼퇴 각이다", "가방 챙겨볼까" };
+        QUIP["f:work"] = new string[] { "메일 확인 중이에요|(퇴근까지 몇 시간…)", "자료 정리 중입니다|(이걸 왜 내가…)", "금방 끝낼게요~|(점심 뭐 먹지)", "확인했습니다^^|(안 읽었음)" };
         QUIP["night"] = new string[] { "집 가고 싶다", "달이 예쁘네", "야근수당 주세요", "내일 연차 쓸까", "배포만 하고 가자" };
     }
     static string Pick(string[] a, int fr, int salt) { return a[((fr / 32) + salt) % a.Length]; }
@@ -358,7 +364,9 @@ static class Ui
             int room = useRight ? rightRoom : leftRoom;
             bool fem = m.Char == "f1";
             string key = (fem ? "f:" : "") + m.Act;
-            string[] qs = (!fem && m.Over && (m.Act == "work" || m.Act == "walk")) ? QUIP["night"] : QUIP[key];
+            string pre = fem ? "f:" : "";
+            string[] qs = (m.Phase == "pre" && m.Act != "cheer") ? QUIP[pre + "lunch"]
+                : ((!fem && m.Over && (m.Act == "work" || m.Act == "walk")) ? QUIP["night"] : QUIP[key]);
             string quip = Pick(qs, fr, m.Act.Length);
             string inner = null;
             if (fem) { int bar = quip.IndexOf('|'); if (bar > 0) { inner = quip.Substring(bar + 1); quip = quip.Substring(0, bar); } }
@@ -777,6 +785,24 @@ class Sprite
         if (talk) Px(-2, 4, 1, 1, 'Y');
     }
 
+    static readonly string[] FLAP = {
+        "KKKKKKKKKK",
+        "KLLLWWLLLK",
+        "KllllllllK",
+        "KKKKKKKKKK" };
+    void FWork()
+    {
+        bool a = fr % 2 == 0;
+        int nod = (fr % 8 == 0 || fr % 8 == 4) ? 1 : 0;
+        FHead(nod, 0, 1, false);
+        FBody(0);
+        Map(FLAP, 1, 10);
+        Px(0, a ? 11 : 12, 1, 2, 'S'); Px(11, a ? 12 : 11, 1, 2, 'S');
+        if (fr % 3 != 2) Px(-1 + (fr * 5) % 3, 10 + (fr % 2), 1, 1, 'Y');
+        if (fr % 3 != 1) Px(11 + (fr * 7) % 3, 10 + ((fr + 1) % 2), 1, 1, 'Y');
+        if (fr % 6 < 3) Px(5, 11, 2, 1, 'Y');
+    }
+
     void FSmash()
     {
         bool punch = fr % 4 < 2;
@@ -889,6 +915,7 @@ class Sprite
         {
             switch (act)
             {
+                case "work": FWork(); break;
                 case "call": FCall(); break;
                 case "smash": FSmash(); break;
                 case "coffee": FCoffee(); break;
@@ -909,6 +936,7 @@ class Sprite
         {
             case "walk": Walk(); break;
             case "cheer": Cheer(); break;
+            case "leave": Cheer(); break;
             case "coffee": Coffee(); break;
             case "sleep": Sleep(); break;
             case "eat": Eat(); break;
@@ -971,7 +999,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 7;
+    public const int Version = 8;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
@@ -1483,18 +1511,21 @@ class WidgetForm : Form
     }
 
     // 행동은 15분마다 바뀐다 (같은 15분 구간에서는 항상 같은 행동 → 재실행해도 일관)
-    static string SlotAct(DateTime now, bool over, string ch)
+    // phase: pre(오전, 점심 전) / post(점심 후) / over(야근)
+    static string SlotAct(DateTime now, bool over, string ch, string phase)
     {
+        long sl = now.Ticks / TimeSpan.TicksPerMinute / 15;
         if (ch == "f1")
         {
-            long sl = now.Ticks / TimeSpan.TicksPerMinute / 15;
             Random fr2 = new Random((int)(sl % int.MaxValue) * 6151 + 29);
-            string[] pool = { "call", "smash", "coffee", "cat", "sleep", "leave" };
+            string[] pool = phase == "pre"
+                ? new string[] { "work", "coffee", "cat", "work", "call" }                       // 오전: 차분하게 (점심 얘기 위주)
+                : new string[] { "work", "call", "smash", "sleep", "coffee", "cat", "call", "sleep" };   // 오후: 일하고 통화하고 졸고…
             return pool[fr2.Next(pool.Length)];
         }
-        long slot = now.Ticks / TimeSpan.TicksPerMinute / 15;
-        Random r = new Random((int)(slot % int.MaxValue) * 7919 + 13);
+        Random r = new Random((int)(sl % int.MaxValue) * 7919 + 13);
         int v = r.Next(100);
+        if (phase == "pre") return v < 55 ? "work" : (v < 80 ? "coffee" : "walk");
         if (over) return v < 35 ? "sleep" : (v < 65 ? "coffee" : (v < 80 ? "walk" : "work"));
         return v < 40 ? "work" : (v < 62 ? "coffee" : (v < 82 ? "walk" : "sleep"));
     }
@@ -1518,7 +1549,7 @@ class WidgetForm : Form
                 viewPref = "auto"; wasOver = false;
             }
             Model m0 = Model.Build(now, clockIn, viewPref, "work", 0);
-            string slot = m0.Phase == "meal" ? "eat" : SlotAct(now, m0.Over, Settings.Char);
+            string slot = m0.Phase == "meal" ? "eat" : ((m0.Phase == "post" && m0.LeftMin <= 30) ? "leave" : SlotAct(now, m0.Over, Settings.Char, m0.Phase));
             if (slot != act) { act = slot; ox = 0; }
             if (m0.Over && !wasOver && inited) cheerUntil = now.AddSeconds(10);
             wasOver = m0.Over; inited = true;
