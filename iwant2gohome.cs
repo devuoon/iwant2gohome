@@ -213,7 +213,7 @@ class Model
     public static Model Build(DateTime now, DateTime clockIn, string viewPref, string act, int ox)
     {
         Model m = new Model();
-        DateTime off = clockIn.AddHours(9);
+        DateTime off = clockIn.AddHours(clockIn.DayOfWeek == DayOfWeek.Friday ? 8 : 9); // 금요일은 총 8시간
         DateTime lun = clockIn.Date.AddHours(11).AddMinutes(30);
         DateTime lunEnd = lun.AddHours(1);
         m.InText = "출근 " + clockIn.ToString("HH:mm");
@@ -999,7 +999,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 8;
+    public const int Version = 9;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
