@@ -19,6 +19,20 @@ static class Program
 {
     [DllImport("user32.dll")] static extern bool SetProcessDPIAware();
 
+    static void KillOthers()
+    {
+        try
+        {
+            int me = System.Diagnostics.Process.GetCurrentProcess().Id;
+            foreach (string name in new string[] { "WorkClock", "iwant2gohome" })
+                foreach (System.Diagnostics.Process p in System.Diagnostics.Process.GetProcessesByName(name))
+                {
+                    try { if (p.Id != me) { p.Kill(); p.WaitForExit(3000); } } catch { }
+                }
+        }
+        catch { }
+    }
+
     [STAThread]
     static void Main(string[] args)
     {
@@ -28,6 +42,7 @@ static class Program
             if (args.Length >= 1 && args[0] == "--uninstall") { Startup.Remove(); return; }
             if (args.Length >= 1 && args[0] == "--install") { Startup.Add(); }
 
+            KillOthers();   // 예전 이름(WorkClock)이나 이전 버전이 남아 있으면 종료 (최신 실행이 우선)
             bool createdNew;
             using (Mutex mutex = new Mutex(true, "Local\\iwant2gohomeWidget", out createdNew))
             {
@@ -916,7 +931,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 3;
+    public const int Version = 4;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
