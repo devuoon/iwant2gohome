@@ -237,7 +237,7 @@ static class Ui
         QUIP["cheer"] = new string[] { "칼퇴 성공!", "집에 가자~", "오늘도 수고!" };
         STATE["f:call"] = "통화 중"; STATE["f:smash"] = "벽 샌드백 중"; STATE["f:coffee"] = "커피 타임"; STATE["f:cat"] = "냥이 힐링"; STATE["f:sleep"] = "졸음 폭발"; STATE["f:leave"] = "퇴근 각"; STATE["f:eat"] = "맛점 타임"; STATE["f:cheer"] = "퇴근이다!";
         QUIP["f:call"] = new string[] { "네~ 확인할게요^^|(점심 뭐 먹지…)", "넵 바로 할게요!|(그 얘기 또 해…)", "좋은 의견이세요~|(왜 지금 말해…)", "회의 가능하세요?|(제발 안 된다고 해라)" };
-        QUIP["f:smash"] = new string[] { "자료 보고 올게요^^|(퍽! 아 시원하다)", "이해했습니다^^|(퍽퍽! 열받네)", "금방 드릴게요^^|(주먹이 부들부들…)", "괜찮습니다^^|(참자 참자 참자…)" };
+        QUIP["f:smash"] = new string[] { "자료 보고 올게요^^|(퍽! 아 시원하다)", "이해했어요^^|(퍽퍽! 열받네)", "금방 드릴게요^^|(주먹이 부들부들…)", "괜찮습니다^^|(참자 참자 참자…)" };
         QUIP["f:coffee"] = new string[] { "커피 한잔요?|(카페인 수혈 중…)", "오늘도 화이팅~|(퇴근까지 몇 시간?)", "향 좋네요~|(이거 마시고 버티자)" };
         QUIP["f:cat"] = new string[] { "어머 귀여워라|(고양이가 최고야)", "냥이 왔어요?|(이게 진짜 힐링)", "잠깐 쉴게요|(냥이 보고 싶다)" };
         QUIP["f:sleep"] = new string[] { "네 듣고 있어요^^|(아 잠온다…)", "집중해서 보는 중|(3분만 눈 감자…)", "자료 정리 중이에요|(누가 좀 깨워줘)" };
@@ -303,7 +303,7 @@ static class Ui
         using (Font f2 = F("Malgun Gothic", 9f, FontStyle.Bold))
         using (Font fBig = F("Consolas", 19f, FontStyle.Bold))
         using (Font ft = F("Malgun Gothic", 7.5f, FontStyle.Regular))
-        using (Font fi = F("Malgun Gothic", 7f, FontStyle.Italic))
+        using (Font fi = F("Malgun Gothic", 7f, FontStyle.Regular))
         using (Font ftb = F("Malgun Gothic", 7.5f, FontStyle.Bold))
         using (Font fp = F("Malgun Gothic", 8.5f, FontStyle.Bold))
         using (StringFormat right = new StringFormat { Alignment = StringAlignment.Far })
@@ -330,7 +330,7 @@ static class Ui
             if (spRight) g.DrawString(pct, fp, Br(sub), 5, barY - 15);
             else g.DrawString(pct, fp, Br(sub), new RectangleF(0, barY - 15, W - 5, 15), right);
 
-            // 말풍선: 캐릭터 옆 빈 공간에 상태 + 한마디
+            // 말풍선(겉말) + 생각풍선(속마음): 시계 아래 영역, 캐릭터 옆 빈 공간
             int leftRoom = sx - 6, rightRoom = W - (sx + spW) - 6;
             bool useRight = rightRoom >= leftRoom;
             int room = useRight ? rightRoom : leftRoom;
@@ -340,41 +340,57 @@ static class Ui
             string quip = Pick(qs, fr, m.Act.Length);
             string inner = null;
             if (fem) { int bar = quip.IndexOf('|'); if (bar > 0) { inner = quip.Substring(bar + 1); quip = quip.Substring(0, bar); } }
-            string state = (!fem && m.Over && m.Act == "work") ? "야근 코딩" : STATE[key];
-            int bw = Math.Min(room - 6, 128);
+            int bw = Math.Min(room - 6, 132);
             if (bw >= 44)
             {
-                int pad = 5;
-                bw = Math.Min(room - 6, 132);
+                int pad = 6;
                 SizeF qsz = g.MeasureString(quip, ft, bw - pad * 2);
-                SizeF isz = inner != null ? g.MeasureString(inner, fi, bw - pad * 2) : SizeF.Empty;
-                int bh = (int)Math.Ceiling(qsz.Height) + (int)Math.Ceiling(isz.Height) + pad * 2;
-                int bBottom = barY - 17, bTop = bBottom - bh;
-                if (bTop < 64) { bTop = 64; bh = bBottom - bTop; }          // 큰 시계(숫자) 아래 영역만 사용
-                int bx = useRight ? sx + spW + 5 : sx - 5 - bw;
-                Rectangle br = new Rectangle(bx, bTop, bw, bh);
-                int ty0 = bBottom - 9;                         // 꼬리 위치(캐릭터 얼굴 높이쯤)
+                int oh = (int)Math.Ceiling(qsz.Height) + pad * 2 - 3;
+                SizeF isz = SizeF.Empty; int ih = 0;
+                if (inner != null) { isz = g.MeasureString(inner, fi, bw - pad * 2); ih = (int)Math.Ceiling(isz.Height) + pad * 2 - 5; }
+                int gap = inner != null ? 5 : 0;
+                int total = oh + gap + ih;
+                int bBottom = barY - 17, bTop = bBottom - total;
+                if (bTop < 64) bTop = 64;                       // 큰 시계(숫자)는 가리지 않음
+                int bx = useRight ? sx + spW + 6 : sx - 6 - bw;
+                Rectangle ob = new Rectangle(bx, bTop, bw, oh);
+                Rectangle ib = new Rectangle(bx, bTop + oh + gap, bw, ih);
+
                 Color bf = night ? Hx("#262E5A") : Color.White;
-                Color bb = night ? Hx("#5B6396") : (meal ? Hx("#E0A96B") : Hx("#8FB3DD"));
+                Color bb = night ? Hx("#6A74B0") : (meal ? Hx("#E0A96B") : Hx("#7FA6D6"));
+                Color tc = night ? Hx("#E8EAF6") : Hx("#1B2A41");
                 g.SmoothingMode = SmoothingMode.AntiAlias;
-                using (GraphicsPath bp = RoundPath(br.X, br.Y, br.Width, br.Height, 6))
+                using (GraphicsPath bp = RoundPath(ob.X, ob.Y, ob.Width, ob.Height, 7))
                 {
                     g.FillPath(Br(bf), bp);
-                    using (Pen pen = new Pen(bb, 1)) g.DrawPath(pen, bp);
+                    using (Pen pen = new Pen(bb, 1.2f)) g.DrawPath(pen, bp);
                 }
+                int ty0 = ob.Bottom - 8;
                 Point[] tail = useRight
-                    ? new Point[] { new Point(br.X + 1, ty0 - 3), new Point(br.X - 5, ty0 + 1), new Point(br.X + 1, ty0 + 4) }
-                    : new Point[] { new Point(br.Right - 1, ty0 - 3), new Point(br.Right + 5, ty0 + 1), new Point(br.Right - 1, ty0 + 4) };
+                    ? new Point[] { new Point(ob.X + 1, ty0 - 3), new Point(ob.X - 5, ty0 + 2), new Point(ob.X + 1, ty0 + 4) }
+                    : new Point[] { new Point(ob.Right - 1, ty0 - 3), new Point(ob.Right + 5, ty0 + 2), new Point(ob.Right - 1, ty0 + 4) };
                 g.FillPolygon(Br(bf), tail);
-                using (Pen pen = new Pen(bb, 1))
+                using (Pen pen = new Pen(bb, 1.2f)) { g.DrawLine(pen, tail[0], tail[1]); g.DrawLine(pen, tail[1], tail[2]); }
+                g.DrawString(quip, ft, Br(tc), new RectangleF(ob.X + pad, ob.Y + pad - 2, bw - pad * 2, qsz.Height + 1));
+
+                if (inner != null)
                 {
-                    g.DrawLine(pen, tail[0], tail[1]); g.DrawLine(pen, tail[1], tail[2]);
+                    Color pf = night ? Hx("#3A2A55") : Hx("#FFE8F0");
+                    Color pb = night ? Hx("#C97AA0") : Hx("#E58AAA");
+                    Color pt = night ? Hx("#F6B3CC") : Hx("#B0365A");
+                    using (GraphicsPath ip = RoundPath(ib.X, ib.Y, ib.Width, ib.Height, 8))
+                    {
+                        g.FillPath(Br(pf), ip);
+                        using (Pen pen = new Pen(pb, 1.2f)) { pen.DashStyle = DashStyle.Dash; g.DrawPath(pen, ip); }
+                    }
+                    // 생각풍선 꼬리: 작은 동그라미 두 개
+                    int ex = useRight ? ib.X : ib.Right, dir = useRight ? -1 : 1, ey = ib.Bottom - 5;
+                    g.FillEllipse(Br(pf), ex + dir * 4 - 2, ey - 2, 5, 5);
+                    g.FillEllipse(Br(pf), ex + dir * 9 - 1, ey + 1, 3, 3);
+                    using (Pen pen = new Pen(pb, 1f)) { g.DrawEllipse(pen, ex + dir * 4 - 2, ey - 2, 5, 5); g.DrawEllipse(pen, ex + dir * 9 - 1, ey + 1, 3, 3); }
+                    g.DrawString(inner, fi, Br(pt), new RectangleF(ib.X + pad, ib.Y + pad - 3, bw - pad * 2, isz.Height + 1));
                 }
                 g.SmoothingMode = SmoothingMode.None;
-                Color tc = night ? Hx("#E8EAF6") : Hx("#1B2A41");
-                                g.DrawString(quip, ft, Br(tc), new RectangleF(br.X + pad, br.Y + pad - 1, bw - pad * 2, qsz.Height + 1));
-                if (inner != null)
-                    g.DrawString(inner, fi, Br(night ? Hx("#F2A6C0") : Hx("#C2415C")), new RectangleF(br.X + pad, br.Y + pad - 1 + qsz.Height, bw - pad * 2, isz.Height + 1));
             }
         }
     }
@@ -684,22 +700,24 @@ class Sprite
 
 
     // ===== 여자1: 히피펌 커리어우먼 (14칸 폭, x=-1 부터) =====
+    // 16칸 폭(x=-2 ~ 13), 맨 윗줄은 y=-1 : 풍성하게 뽀글뽀글한 히피펌
     static readonly string[] FHEAD = {
-        "..KKKKKKKKKK..",
-        ".KHHhHHHHhHHK.",
-        "KHHHhHSSHhHHHK",
-        "KHHhHSSSSSHhHK",
-        "KHHSSSSSSSSHHK",
-        "KHHSeSSSSeSHHK",
-        "KHHgSgSSgSgHHK",
-        "KHHBSMMMMSBHHK",
-        "KHHKSSSSSSKHHK",
-        "KHhHKKKKKKHhHK" };
+        "...KK..KKKK..KK.",
+        "..KHHKKHHHHKKHHK",
+        ".KHhHHHhHHhHHHhK",
+        "KHHhHHHSSHHHhHHK",
+        ".KHhHSSSSSSHhHK.",
+        "KHHHSSSSSSSSHHHK",
+        ".KHHSeSSSSeSHHK.",
+        "KHHHgSgSSgSgHHHK",
+        ".KHHBSMMMMSBHHK.",
+        "KHHHKSSSSSSKHHHK",
+        "KHhHHKKKKKKHHhHK" };
     static readonly string[] FBODY = {
-        "KHHKRRRRRRKHHK",
-        "KHHKRrRRrRKHHK",
-        "KHhKRRrRRrKhHK",
-        ".KHKKPPPPKKHK." };
+        "KHHHKRRRRRRKHHHK",
+        ".KHHKRrRRrRKHHK.",
+        "KhHHKRRrRRrKHHhK",
+        ".KHHKKPPPPKKHHK." };
 
     // eye: 0=^ 웃는 눈, 1=감은 눈(졸음), 2=뜬 눈 / mouth: 0=활짝, 1=작게 / back: 뒷모습
     void FHead(int dy, int eye, int mouth, bool back)
@@ -709,19 +727,19 @@ class Sprite
             {
                 char ch = FHEAD[r][c];
                 if (ch == '.') continue;
-                if (back && r >= 2 && c >= 3 && c <= 10 && !(r == 8 && (c == 3 || c == 10) && false))
+                if (back && r >= 3 && c >= 4 && c <= 11)
                     ch = ((r * 5 + c * 3) % 7 == 0) ? 'h' : 'H';
                 else
                 {
-                    if (ch == 'e') ch = eye == 0 ? 'K' : (eye == 2 ? 'K' : 'S');
+                    if (ch == 'e') ch = (eye == 0 || eye == 2) ? 'K' : 'S';
                     else if (ch == 'g') ch = eye == 0 ? 'K' : (eye == 1 ? 'K' : 'S');
-                    if (eye == 1 && r == 6 && (c == 4 || c == 9)) ch = 'K';
-                    if (r == 7 && mouth == 1 && (c == 5 || c == 8)) ch = 'S';
+                    if (eye == 1 && r == 7 && (c == 5 || c == 10)) ch = 'K';
+                    if (r == 8 && mouth == 1 && (c == 6 || c == 9)) ch = 'S';
                 }
-                Px(c - 1, r + dy, 1, 1, ch);
+                Px(c - 2, r - 1 + dy, 1, 1, ch);
             }
     }
-    void FBody(int dy) { Map(FBODY, -1, 10 + dy); }
+    void FBody(int dy) { Map(FBODY, -2, 10 + dy); }
 
     void FCall()
     {
@@ -931,7 +949,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 4;
+    public const int Version = 5;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
