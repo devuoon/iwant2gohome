@@ -253,26 +253,25 @@ static class Ui
     static Ui()
     {
         STATE["work"] = "코딩 중"; STATE["coffee"] = "커피 타임"; STATE["walk"] = "산책 중"; STATE["sleep"] = "졸음 모드"; STATE["eat"] = "맛점 타임"; STATE["cheer"] = "퇴근이다!";
-        QUIP["work"] = new string[] { "버그 잡는 중…", "커밋 한 번만 더", "어? 왜 되지?", "빌드 성공!", "PR 올렸다", "콘솔에 에러가…", "이건 내일 리팩토링", "타입 에러 또…", "스택오버플로 검색" };
-        QUIP["coffee"] = new string[] { "카페인 충전!", "수혈 중…", "한 모금만 더", "아아 없이 못 산다", "라떼 한 잔의 여유" };
-        QUIP["walk"] = new string[] { "다리 좀 풀자", "머리 식히는 중", "스트레칭~", "바람 쐬러 가자", "화장실 가는 척" };
-        QUIP["sleep"] = new string[] { "3분만…", "눈이 감겨요", "모니터가 베개로", "zzZ…", "커피가 안 듣네" };
-        QUIP["eat"] = new string[] { "오늘 메뉴 뭐지?", "냠냠", "밥이 최고", "역시 점심시간", "한 숟갈만 더" };
-        QUIP["cheer"] = new string[] { "칼퇴 성공!", "집에 가자~", "오늘도 수고!" };
-        STATE["f:call"] = "통화 중"; STATE["f:smash"] = "벽 샌드백 중"; STATE["f:coffee"] = "커피 타임"; STATE["f:cat"] = "냥이 힐링"; STATE["f:sleep"] = "졸음 폭발"; STATE["f:leave"] = "퇴근 각"; STATE["f:eat"] = "맛점 타임"; STATE["f:cheer"] = "퇴근이다!";
-        QUIP["f:call"] = new string[] { "네~ 확인할게요^^|(점심 뭐 먹지…)", "넵 바로 할게요!|(그 얘기 또 해…)", "좋은 의견이세요~|(왜 지금 말해…)", "회의 가능하세요?|(제발 안 된다고 해라)" };
-        QUIP["f:smash"] = new string[] { "자료 보고 올게요^^|(퍽! 아 시원하다)", "이해했어요^^|(퍽퍽! 열받네)", "금방 드릴게요^^|(주먹이 부들부들…)", "괜찮습니다^^|(참자 참자 참자…)" };
-        QUIP["f:coffee"] = new string[] { "커피 한잔요?|(카페인 수혈 중…)", "오늘도 화이팅~|(퇴근까지 몇 시간?)", "향 좋네요~|(이거 마시고 버티자)" };
-        QUIP["f:cat"] = new string[] { "어머 귀여워라|(고양이가 최고야)", "냥이 왔어요?|(이게 진짜 힐링)", "잠깐 쉴게요|(냥이 보고 싶다)" };
-        QUIP["f:sleep"] = new string[] { "네 듣고 있어요^^|(아 잠온다…)", "집중해서 보는 중|(3분만 눈 감자…)", "자료 정리 중이에요|(누가 좀 깨워줘)" };
-        QUIP["f:leave"] = new string[] { "먼저 들어갈게요^^|(퇴근이다!!)", "수고하셨습니다|(집 가서 뭐 먹지)", "내일 뵙겠습니다~|(내일은 제발 연차)" };
-        QUIP["f:eat"] = new string[] { "맛있게 드세요^^|(오늘 메뉴 대박)", "식사 맛있게요~|(디저트는 뭐 먹지)", "천천히 드세요~|(밥이 제일 중요해)" };
-        QUIP["f:cheer"] = new string[] { "수고하셨습니다!|(퇴근 완료!!)", "내일 뵙겠습니다~|(집에 가자!!)" };
-        QUIP["lunch"] = new string[] { "점심 뭐 먹지?", "초밥? 햄버거?", "국밥 땡긴다", "오늘은 제육이다", "돈까스 먹을까?", "김치찌개 어때?", "샐러드…는 아니지", "마라탕은 어제 먹었는데" };
-        QUIP["f:lunch"] = new string[] { "점심 뭐 드실래요?^^|(초밥? 햄버거? 국밥!)", "오늘 메뉴 정하셨어요?|(마라탕만은 안 돼)", "맛집 아시는 데 있어요?|(오늘은 햄버거다)", "저는 아무거나 좋아요^^|(아무거나 말고 초밥)", "점심시간 다가오네요~|(배고파 죽겠다)", "샐러드 어때요?^^|(탄수화물 먹고 싶다)" };
-        QUIP["leave"] = new string[] { "퇴근 30분 전!", "슬슬 짐 싸자", "칼퇴 각이다", "가방 챙겨볼까" };
-        QUIP["f:work"] = new string[] { "메일 확인 중이에요|(퇴근까지 몇 시간…)", "자료 정리 중입니다|(이걸 왜 내가…)", "금방 끝낼게요~|(점심 뭐 먹지)", "확인했습니다^^|(안 읽었음)" };
-        QUIP["night"] = new string[] { "집 가고 싶다", "달이 예쁘네", "야근수당 주세요", "내일 연차 쓸까", "배포만 하고 가자" };
+        QUIP["work"] = new string[] { "버그 잡는 중…", "커밋 한 번만 더", "어? 왜 되지?", "빌드 성공!", "PR 올렸다", "콘솔에 에러가…", "이건 내일 리팩토링", "타입 에러 또…", "스택오버플로 검색", "이 코드 누가 짰지?", "git blame 해보자", "주석이 거짓말을…", "머지 충돌 났다", "린트 에러 천 개", "로컬에선 됐는데", "캐시 지우면 되나?", "새로고침 한 번만" };
+        QUIP["coffee"] = new string[] { "카페인 충전!", "수혈 중…", "한 모금만 더", "아아 없이 못 산다", "라떼 한 잔의 여유", "오늘 몇 잔째지?", "디카페인은 배신", "얼음 소리 좋다", "커피 없인 코딩 못 해", "샷 추가할걸" };
+        QUIP["walk"] = new string[] { "다리 좀 풀자", "머리 식히는 중", "스트레칭~", "바람 쐬러 가자", "화장실 가는 척", "물 뜨러 가야지", "허리가 비명을…", "걷다 보면 답이 나와", "창밖 구경 중", "잠깐 걷고 올게" };
+        QUIP["sleep"] = new string[] { "3분만…", "눈이 감겨요", "모니터가 베개로", "zzZ…", "커피가 안 듣네", "회의 중 아니지?", "눈 뜨고 자는 법", "식곤증 왔다", "키보드가 포근해", "딱 5분만 더" };
+        QUIP["eat"] = new string[] { "오늘 메뉴 뭐지?", "냠냠", "밥이 최고", "역시 점심시간", "한 숟갈만 더", "밥 먹을 때가 제일 행복", "후식은 커피지", "국물이 끝내준다", "반찬 더 주세요", "다 먹고 산책하자" };
+        QUIP["cheer"] = new string[] { "칼퇴 성공!", "집에 가자~", "오늘도 수고!", "오늘도 해냈다!", "내일의 나여 안녕" };
+        QUIP["f:call"] = new string[] { "네~ 확인할게요^^", "넵 바로 할게요!", "좋은 의견이세요~", "회의 가능하세요?", "네 팀장님~", "다시 말씀해 주세요", "메일 보내드릴게요", "잠시만요, 메모할게요", "일정 확인해 볼게요", "그 건은 제가 볼게요", "오후에 공유드릴게요", "네네 알겠습니다^^" };
+        QUIP["f:smash"] = new string[] { "자료 보고 올게요^^", "이해했어요^^", "금방 드릴게요^^", "괜찮습니다^^", "잠깐 바람 쐬고 올게요", "저 잠깐 자리 비울게요", "호흡 좀 가다듬고요", "괜찮아요, 괜찮아요", "주먹이 근질근질…", "스트레스 해소 중^^", "잠깐만 혼자 있을게요", "후… 침착하자" };
+        QUIP["f:coffee"] = new string[] { "커피 한잔요?", "오늘도 화이팅~", "향 좋네요~", "아아 드실래요?", "당 떨어지네요", "오늘 몇 잔째죠?", "커피 수혈 중이에요", "한 모금 하고 갈게요", "이 시간엔 커피죠", "원두 바꿨나 봐요", "라떼가 땡기네요", "카페인으로 버팁니다" };
+        QUIP["f:cat"] = new string[] { "어머 귀여워라", "냥이 왔어요?", "잠깐 쉴게요", "냥이가 제일 좋아요", "골골송 들려요?", "우리 냥이 최고", "쓰다듬으면 힐링돼요", "오늘도 사랑스럽네", "츄르 줄까?", "보들보들하다" };
+        QUIP["f:sleep"] = new string[] { "네 듣고 있어요^^", "집중해서 보는 중", "자료 정리 중이에요", "눈 감고 생각 중이에요", "아 잠온다…", "3분만 눈 감을게요", "식곤증이 왔나 봐요", "커피가 안 듣네요", "회의 언제 끝나요?", "깜빡 졸았네요^^" };
+        QUIP["f:leave"] = new string[] { "먼저 들어갈게요^^", "수고하셨습니다", "내일 뵙겠습니다~", "퇴근이다!!", "집 가서 뭐 먹지?", "내일은 제발 연차", "칼퇴 각이네요", "가방 챙겼어요~", "오늘도 고생했어요", "주말까지 며칠이더라" };
+        QUIP["f:eat"] = new string[] { "맛있게 드세요^^", "식사 맛있게요~", "천천히 드세요~", "오늘 메뉴 대박이에요", "디저트는 뭐 먹죠?", "밥이 제일 중요해요", "후식은 아아로~", "국물 진짜 맛있다", "많이 드세요^^", "배불러서 졸리겠다" };
+        QUIP["f:cheer"] = new string[] { "수고하셨습니다!", "내일 뵙겠습니다~", "퇴근 완료!!", "집에 가자!!", "오늘도 해냈어요!", "불금이다!!" };
+        QUIP["lunch"] = new string[] { "점심 뭐 먹지?", "초밥? 햄버거?", "국밥 땡긴다", "오늘은 제육이다", "돈까스 먹을까?", "김치찌개 어때?", "샐러드…는 아니지", "마라탕은 어제 먹었는데", "냉면은 아직 춥나?", "파스타 먹으러 갈까?", "오늘은 한식이지", "순두부 어때?", "분식 땡기는 날", "회사 앞 맛집 가자", "배고파서 집중이 안 돼", "점심까지 몇 분 남았지?" };
+        QUIP["f:lunch"] = new string[] { "점심 뭐 드실래요?^^", "오늘 메뉴 정하셨어요?", "맛집 아시는 데 있어요?", "저는 아무거나 좋아요^^", "점심시간 다가오네요~", "샐러드 어때요?^^", "초밥 어때요?", "오늘은 햄버거 먹을까요?", "국밥 한 그릇 해요~", "마라탕은 어제 먹었죠?", "파스타도 좋아요^^", "같이 가실래요?", "점심 뭐가 좋을까요?", "새로 생긴 데 가봐요", "배고파지네요~", "디저트까지 가요^^", "오늘은 제가 쏠게요!", "든든한 거 먹어요" };
+        QUIP["leave"] = new string[] { "퇴근 30분 전!", "슬슬 짐 싸자", "칼퇴 각이다", "가방 챙겨볼까", "오늘 저녁 뭐 먹지?", "마지막 한 줄만 더", "퇴근길 음악 고르는 중", "내일의 나에게 맡기자" };
+        QUIP["f:work"] = new string[] { "메일 확인 중이에요", "자료 정리 중입니다", "금방 끝낼게요~", "확인했습니다^^", "보고서 쓰는 중이에요", "회의록 정리하고 있어요", "일정 조율 중이에요", "오늘 할 일 체크 중!", "엑셀 좀 볼게요", "거의 다 됐어요~", "피드백 반영하는 중", "메신저 답장 중이에요", "잠깐 집중 모드예요" };
+        QUIP["night"] = new string[] { "집 가고 싶다", "달이 예쁘네", "야근수당 주세요", "내일 연차 쓸까", "배포만 하고 가자", "저녁은 뭐 먹지?", "이것만 하고 간다", "사무실 조용하다", "배고프다…", "오늘 안에 끝날까?", "택시비 나오나?", "치킨 시킬까?" };
     }
     static string Pick(string[] a, int fr, int salt) { return a[((fr / 32) + salt) % a.Length]; }
 
@@ -331,7 +330,6 @@ static class Ui
         using (Font f2 = F("Malgun Gothic", 9f, FontStyle.Bold))
         using (Font fBig = F("Consolas", 19f, FontStyle.Bold))
         using (Font ft = F("Malgun Gothic", 7.5f, FontStyle.Regular))
-        using (Font fi = F("Malgun Gothic", 7f, FontStyle.Regular))
         using (Font ftb = F("Malgun Gothic", 7.5f, FontStyle.Bold))
         using (Font fp = F("Malgun Gothic", 8.5f, FontStyle.Bold))
         using (StringFormat right = new StringFormat { Alignment = StringAlignment.Far })
@@ -368,23 +366,18 @@ static class Ui
             string[] qs = (m.Phase == "pre" && m.Act != "cheer") ? QUIP[pre + "lunch"]
                 : ((!fem && m.Over && (m.Act == "work" || m.Act == "walk")) ? QUIP["night"] : QUIP[key]);
             string quip = Pick(qs, fr, m.Act.Length);
-            string inner = null;
-            if (fem) { int bar = quip.IndexOf('|'); if (bar > 0) { inner = quip.Substring(bar + 1); quip = quip.Substring(0, bar); } }
+            
             int bw = Math.Min(room - 6, 132);
             if (bw >= 44)
             {
                 int pad = 6;
                 SizeF qsz = g.MeasureString(quip, ft, bw - pad * 2);
                 int oh = (int)Math.Ceiling(qsz.Height) + pad * 2 - 3;
-                SizeF isz = SizeF.Empty; int ih = 0;
-                if (inner != null) { isz = g.MeasureString(inner, fi, bw - pad * 2); ih = (int)Math.Ceiling(isz.Height) + pad * 2 - 5; }
-                int gap = inner != null ? 5 : 0;
-                int total = oh + gap + ih;
+                int total = oh;
                 int bBottom = barY - 17, bTop = bBottom - total;
                 if (bTop < 64) bTop = 64;                       // 큰 시계(숫자)는 가리지 않음
                 int bx = useRight ? sx + spW + 6 : sx - 6 - bw;
                 Rectangle ob = new Rectangle(bx, bTop, bw, oh);
-                Rectangle ib = new Rectangle(bx, bTop + oh + gap, bw, ih);
 
                 Color bf = night ? Hx("#262E5A") : Color.White;
                 Color bb = night ? Hx("#6A74B0") : (meal ? Hx("#E0A96B") : Hx("#7FA6D6"));
@@ -403,23 +396,6 @@ static class Ui
                 using (Pen pen = new Pen(bb, 1.2f)) { g.DrawLine(pen, tail[0], tail[1]); g.DrawLine(pen, tail[1], tail[2]); }
                 g.DrawString(quip, ft, Br(tc), new RectangleF(ob.X + pad, ob.Y + pad - 2, bw - pad * 2, qsz.Height + 1));
 
-                if (inner != null)
-                {
-                    Color pf = night ? Hx("#3A2A55") : Hx("#FFE8F0");
-                    Color pb = night ? Hx("#C97AA0") : Hx("#E58AAA");
-                    Color pt = night ? Hx("#F6B3CC") : Hx("#B0365A");
-                    using (GraphicsPath ip = RoundPath(ib.X, ib.Y, ib.Width, ib.Height, 8))
-                    {
-                        g.FillPath(Br(pf), ip);
-                        using (Pen pen = new Pen(pb, 1.2f)) { pen.DashStyle = DashStyle.Dash; g.DrawPath(pen, ip); }
-                    }
-                    // 생각풍선 꼬리: 작은 동그라미 두 개
-                    int ex = useRight ? ib.X : ib.Right, dir = useRight ? -1 : 1, ey = ib.Bottom - 5;
-                    g.FillEllipse(Br(pf), ex + dir * 4 - 2, ey - 2, 5, 5);
-                    g.FillEllipse(Br(pf), ex + dir * 9 - 1, ey + 1, 3, 3);
-                    using (Pen pen = new Pen(pb, 1f)) { g.DrawEllipse(pen, ex + dir * 4 - 2, ey - 2, 5, 5); g.DrawEllipse(pen, ex + dir * 9 - 1, ey + 1, 3, 3); }
-                    g.DrawString(inner, fi, Br(pt), new RectangleF(ib.X + pad, ib.Y + pad - 3, bw - pad * 2, isz.Height + 1));
-                }
                 g.SmoothingMode = SmoothingMode.None;
             }
         }
@@ -999,7 +975,7 @@ static class Settings
 // 자체 업데이트: 서버(URL 또는 공유 폴더)의 version.txt 숫자가 더 크면 iwant2gohome.cs 를 받아 컴파일 후 교체·재시작
 static class Updater
 {
-    public const int Version = 9;
+    public const int Version = 10;
     static bool busy;
     public static bool Busy { get { return busy; } }
 
